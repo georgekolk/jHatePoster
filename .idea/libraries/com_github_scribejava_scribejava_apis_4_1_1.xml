@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="com.github.scribejava:scribejava-apis:4.1.1" type="repository">
+    <properties maven-id="com.github.scribejava:scribejava-apis:4.1.1" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/scribejava/scribejava-apis/4.1.1/scribejava-apis-4.1.1.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/scribejava/scribejava-core/4.1.1/scribejava-core-4.1.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
