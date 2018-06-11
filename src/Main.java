@@ -242,6 +242,29 @@ public class Main {
                         }
                     }
                     break;
+                case "telegram":
+                    try{
+                        for (File fileToProcess : tempFileList) {
+                            switch (FilenameUtils.getExtension(fileToProcess.toString()).toLowerCase()) {
+                                case "jpg": case "jpeg": case "png": case "gif":
+                                    savePhotoResult = TelegramHelper.postSinglePhoto(
+                                            dirToProcess.getBlogname(),
+                                            dirToProcess.getKey(),
+                                            fileToProcess);
+
+                                    System.out.println("savePhotoResult: " + savePhotoResult);
+                                    break;
+                            }
+                        }
+                    }catch(Exception tpe){
+                        tpe.printStackTrace();
+                        try {
+                            conn.WriteEventToDB("Telegram postSinglePhoto", "error", dirToProcess.getDirectory() + "_" + tpe.getMessage());
+                        } catch (Exception z) {
+                            z.printStackTrace();
+                        }
+                    }
+                    break;
             }
 
             if (savePhotoResult){

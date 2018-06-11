@@ -2,6 +2,6 @@
   "newPosterDir":"C://jHateSMMTemp",
   "dbPath": "D://md//workspaceEclipse//jHatePoster//out//artifacts//jHatePoster_jar//jHatePoster.s3db",
   "tableName": "jHatePoster",
-  "httpsProxyHost":"158.69.170.220",
-  "httpsProxyPort":"8080"
+  "httpsProxyHost":"89.236.17.106",
+  "httpsProxyPort":"3128"
 }
