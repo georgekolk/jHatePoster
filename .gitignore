@@ -1,0 +1,8 @@
+*.gem
+*.swp
+rdoc/
+pkg/
+out/
+.idea/
+*.iml
+*.txt
