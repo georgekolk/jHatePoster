@@ -11,5 +11,6 @@
     <orderEntry type="library" name="com.github.scribejava:scribejava-apis:4.1.1" level="project" />
     <orderEntry type="library" name="org.apache.directory.studio:org.apache.commons.io:2.4" level="project" />
     <orderEntry type="library" name="org.xerial:sqlite-jdbc:3.20.0" level="project" />
+    <orderEntry type="library" name="org.twitter4j:twitter4j-core:4.0.3" level="project" />
   </component>
 </module>

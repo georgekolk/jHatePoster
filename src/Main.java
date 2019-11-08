@@ -2,14 +2,16 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import twitter4j.*;
+import twitter4j.conf.ConfigurationBuilder;
 
 
 public class Main {
@@ -78,6 +80,7 @@ public class Main {
         File directory = new File(newPosterDir);
         File[] fList = directory.listFiles();
 
+        //---------------------------load psots-------------------------------------------------------------------------
         for (File fileToProcess : fList) {
             File defaultConfigJson = new File(fileToProcess.toString()+"//post.json");
 
@@ -126,7 +129,7 @@ public class Main {
             File[] tempFileList = tempDirectory.listFiles();
 
 
-            Boolean savePhotoResult = false;
+            boolean savePhotoResult = false;
 
             switch(dirToProcess.getBlogType()) {
                 case "vkontakte": case "NEWvkontakte":
@@ -150,7 +153,7 @@ public class Main {
 
                     try {
                         uploadDocPage = VkHelper.docsGetWallUploadServer(dirToProcess.getKey(), dirToProcess.getBlogname());
-                    }catch (Exception e) {
+                    }catch(Exception e){
                         e.printStackTrace();
                         try {
                             //Write getWallUploadServer error
@@ -265,6 +268,60 @@ public class Main {
                         }
                     }
                     break;
+                case "twitter":
+
+                    ConfigurationBuilder twitterConfigBuilder = new ConfigurationBuilder();
+                    twitterConfigBuilder.setDebugEnabled(true);
+                    twitterConfigBuilder.setOAuthConsumerKey(dirToProcess.getKey().substring(0, 25));
+                    twitterConfigBuilder.setOAuthConsumerSecret(dirToProcess.getKey().substring(25, 75));
+                    twitterConfigBuilder.setOAuthAccessToken(dirToProcess.getKey().substring(75, 125));
+                    twitterConfigBuilder.setOAuthAccessTokenSecret(dirToProcess.getKey().substring(125, 170));
+
+                    Twitter twitter = new TwitterFactory(twitterConfigBuilder.build()).getInstance();
+
+                    long[] mediaIds = new long[4];
+                    int mediaIdCounter = -1;
+
+                    for (File fileToProcess : tempFileList) {
+                        try {
+                            switch (FilenameUtils.getExtension(fileToProcess.toString()).toLowerCase()) {
+                                case "jpg": case "jpeg":case "png":case "gif":
+                                    UploadedMedia media1 = twitter.uploadMedia(fileToProcess);
+                                    mediaIds[mediaIdCounter++] = media1.getMediaId();
+                                    break;
+                            }
+                        }catch(Exception e){
+                            try {
+                                //Write uploadPhoto error
+                                conn.WriteEventToDB("twitter media upload", "error", e.getMessage());
+                            } catch (Exception z) {
+                                z.printStackTrace();
+                            }
+                        }
+                    }
+
+                    StatusUpdate update = new StatusUpdate(dirToProcess.getTags());
+                    update.setMediaIds(Arrays.copyOf(mediaIds, 4));
+
+                    //nt[] copy = Arrays.copyOf(mediaIds, 4);
+                    //System.out.println(mediaIds);
+                    Status stat = null;
+
+                    try {
+                        stat = twitter.updateStatus(update);
+                    } catch (TwitterException e) {
+                        e.printStackTrace();
+                        try {
+                            //Write uploadPhoto error
+                            conn.WriteEventToDB("twitter update status error", "error", e.getMessage());
+                        } catch (Exception z) {
+                            z.printStackTrace();
+                        }
+
+                    }
+
+                    System.out.println("Successfully updated the status to [" + stat.getText() + "][" + stat.getId() + "].");
+                    break;
             }
 
             if (savePhotoResult){
@@ -287,9 +344,6 @@ public class Main {
 
             }
         }
-
-
-
 
     }
 }
